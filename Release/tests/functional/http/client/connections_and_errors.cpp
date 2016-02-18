@@ -134,7 +134,7 @@ TEST_FIXTURE(uri_address, request_timeout)
     http_client client(m_uri, config);
     auto responseTask = client.request(methods::GET);
     
-#ifdef __APPLE__
+#if !defined(_WIN32)
     // CodePlex 295
     VERIFY_THROWS(responseTask.get(), http_exception);
 #else
@@ -150,7 +150,7 @@ TEST_FIXTURE(uri_address, request_timeout_microsecond)
 
     http_client client(m_uri, config);
     auto responseTask = client.request(methods::GET);
-#ifdef __APPLE__
+#if !defined(_WIN32)
     // CodePlex 295
     VERIFY_THROWS(responseTask.get(), http_exception);
 #else
@@ -209,7 +209,7 @@ TEST_FIXTURE(uri_address, content_ready_timeout)
         http_response rsp = client.request(msg).get();
 
         // The response body should timeout and we should receive an exception
-#ifndef _WIN32
+#if !defined(_WIN32)
         // CodePlex 295
         VERIFY_THROWS(rsp.content_ready().wait(), http_exception);
 #else
@@ -245,7 +245,7 @@ TEST_FIXTURE(uri_address, stream_timeout)
 
         // The response body should timeout and we should receive an exception
         auto readTask = rsp.body().read_to_end(streams::producer_consumer_buffer<uint8_t>());
-#ifndef _WIN32
+#if !defined(_WIN32)
         // CodePlex 295
         VERIFY_THROWS(readTask.get(), http_exception);
 #else

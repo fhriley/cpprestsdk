@@ -307,7 +307,7 @@ TEST_FIXTURE(uri_address, set_progress_handler_request_timeout)
 
     auto response = client.request(msg);
     
-#ifdef __APPLE__
+#if !defined(_WIN32)
     // CodePlex 295
     VERIFY_THROWS(response.get(), http_exception);
 #else
