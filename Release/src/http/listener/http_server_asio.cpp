@@ -785,17 +785,19 @@ void connection::handle_response_written(const http_response &response, const bo
 void connection::finish_request_response()
 {
     // kill the connection
-    {
-        pplx::scoped_lock<pplx::extensibility::recursive_lock_t> lock(m_p_parent->m_connections_lock);
-        m_p_parent->m_connections.erase(this);
-        if (m_p_parent->m_connections.empty())
-        {
-            m_p_parent->m_all_connections_complete.set();
-        }
-    }
+    m_p_parent->erase_connection(this);
     
     close();
     if (--m_refs == 0) delete this;
+}
+
+void hostport_listener::erase_connection(connection* conn) {
+    pplx::scoped_lock<pplx::extensibility::recursive_lock_t> lock(m_connections_lock);
+    m_connections.erase(conn);
+    if (m_connections.empty())
+    {
+        m_all_connections_complete.set();
+    }
 }
 
 void hostport_listener::stop()
