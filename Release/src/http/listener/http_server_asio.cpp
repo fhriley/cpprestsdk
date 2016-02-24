@@ -538,30 +538,33 @@ void connection::async_read_until_buffersize(size_t size, const ReadHandler &han
     }
 }
 
+http_listener_impl* hostport_listener::route_uri(const web::uri& u)
+{
+    auto path_segments = uri::split_path(uri::decode(u.path()));
+    for (auto i = static_cast<long>(path_segments.size()); i >= 0; --i)
+    {
+        std::string path = "";
+        for (size_t j = 0; j < static_cast<size_t>(i); ++j)
+        {
+            path += "/" + path_segments[j];
+        }
+        path += "/";
+
+        pplx::extensibility::scoped_read_lock_t lock(m_listeners_lock);
+        auto it = m_listeners.find(path);
+        if (it != m_listeners.end())
+        {
+            return it->second;
+        }
+    }
+
+    return nullptr;
+}
+
 void connection::dispatch_request_to_listener()
 {
     // locate the listener:
-    web::http::experimental::listener::details::http_listener_impl* pListener = nullptr;
-    {
-        auto path_segments = uri::split_path(uri::decode(m_request.relative_uri().path()));
-        for (auto i = static_cast<long>(path_segments.size()); i >= 0; --i)
-        {
-            std::string path = "";
-            for (size_t j = 0; j < static_cast<size_t>(i); ++j)
-            {
-                path += "/" + path_segments[j];
-            }
-            path += "/";
-
-            pplx::extensibility::scoped_read_lock_t lock(m_p_parent->m_listeners_lock);
-            auto it = m_p_parent->m_listeners.find(path);
-            if (it != m_p_parent->m_listeners.end())
-            {
-                pListener = it->second;
-                break;
-            }
-        }
-    }
+    web::http::experimental::listener::details::http_listener_impl* pListener = m_p_parent->route_uri(m_request.relative_uri());
 
     if (pListener == nullptr)
     {

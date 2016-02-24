@@ -180,6 +180,7 @@ public:
 private:
     void on_accept(boost::asio::ip::tcp::socket* socket, const boost::system::error_code& ec);
     void erase_connection(connection*);
+    http_listener_impl* route_uri(const web::uri&);
 };
 
 }
