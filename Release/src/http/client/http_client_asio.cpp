@@ -416,8 +416,6 @@ public:
 
             request_stream << CRLF;
 
-            m_context->m_timer.start();
-
             tcp::resolver::query query(proxy_host, utility::conversions::print_string(proxy_port, std::locale::classic()));
 
             auto client = std::static_pointer_cast<asio_client>(m_context->m_http_client);
@@ -433,9 +431,9 @@ public:
             }
             else
             {
-                m_context->m_timer.reset();
                 auto endpoint = *endpoints;
                 m_context->m_connection->async_connect(endpoint, boost::bind(&ssl_proxy_tunnel::handle_tcp_connect, shared_from_this(), boost::asio::placeholders::error, ++endpoints));
+                m_context->m_timer.start();
             }
         }
 
