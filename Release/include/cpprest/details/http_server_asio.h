@@ -144,7 +144,7 @@ private:
     std::string m_port;
 
     bool m_is_https;
-    const std::function<void(boost::asio::ssl::context&)>& m_ssl_context_callback;
+    std::function<void(boost::asio::ssl::context&)> m_ssl_context_callback;
 
 public:
      hostport_listener(http_linux_server* server, const std::string& hostport, bool is_https, const http_listener_config& config)
