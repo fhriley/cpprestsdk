@@ -65,8 +65,8 @@ protected:
     virtual unsigned long load_impl() = 0;
     virtual unsigned long unload_impl() = 0;
 
-    bool m_loaded;
     const std::string m_dllName;
+    bool m_loaded;
 
 private:
 	test_module(const test_module &);
