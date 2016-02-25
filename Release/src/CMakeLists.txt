@@ -58,6 +58,10 @@ if(UNIX)
       set(WARNINGS "${WARNINGS} -Werror")
   endif()
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNINGS} -pedantic")
+
+  if (${CMAKE_GENERATOR} MATCHES "Visual Studio .*")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Yu${CMAKE_CURRENT_SOURCE_DIR}/pch/stdafx.cpp")
+  endif()
 elseif(WIN32)
   set(SOURCES
     ${SOURCES_COMMON}
