@@ -53,7 +53,7 @@ if(UNIX)
   else()
     list(APPEND SOURCES pplx/pplxlinux.cpp)
   endif()
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNINGS} -Werror -pedantic -fPIC")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNINGS} -Werror -pedantic")
 elseif(WIN32)
   set(SOURCES
     ${SOURCES_COMMON}
@@ -110,7 +110,8 @@ elseif(ANDROID)
   # Perhaps revisit in the future? (NDK r9d, 8/7/14)
 else()
   set_target_properties(${Casablanca_LIBRARY} PROPERTIES
-    SOVERSION ${CPPREST_VERSION_MAJOR}.${CPPREST_VERSION_MINOR})
+    SOVERSION ${CPPREST_VERSION_MAJOR}.${CPPREST_VERSION_MINOR} POSITION_INDEPENDENT_CODE
+ON)
 
   install(
     TARGETS ${Casablanca_LIBRARY}
